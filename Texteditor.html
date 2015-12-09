@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <style>
+
+        .div {
+            width: 470px;
+            height: 290px;
+            border: 1px solid black;
+            box-sizing: border-box;
+            margin: 0 auto;
+            padding: 10px;
+            font-size: 10pt;
+        }
+        textarea.text {
+            width: 100%;
+            height: 200px;
+            border: 1px solid black;
+            margin: 10px auto;
+            box-sizing: border-box;
+        }
+        p { margin: auto; }
+        #text1 {
+            font-family: serif;
+            overflow-y: auto;
+            word-break: break-all;
+        }
+        #redaguv, #stiliz {
+            display: none;
+        }
+        #stiliz {
+            line-height: 2.5;
+        }
+        #table_kolir {
+            border: 1px solid grey;
+            display: none;
+            position: absolute;
+        }
+        td {
+            width: 25px;
+            height: 25px;
+        }
+        #red-st {
+            text-align: center;
+            margin: 10px;
+        }
+        #dodaty_fon {
+            background: rgba(0,0,0,0.5);
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            cursor: pointer;
+            display: none;
+        }
+        #dodaty {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 25%;
+            right: 25%;
+            background: white;
+            display: none;
+            box-sizing: border-box;
+            padding: 10px 30px;
+        }
+        .tf {
+            width: 40px;
+        }
+        #dodaty_list, #dodaty_table {
+            display: none;
+        }
+
+
+        /* :-* */
+        #dodaty > input[type="radio"] {
+            display: none;
+        }
+
+        #dodaty > label {
+            background: #AAA;
+            padding: 5px;
+            display: inline-block;
+            cursor: pointer;
+        }
+        #dodaty > #dodaty_table,
+        #dodaty > #dodaty_list {
+            background: #CCC;
+            padding: 10px;
+            margin: 0;
+        }
+
+        #dodaty > input[type="radio"]:checked + label {
+            background: #ACF;
+        }
+
+    </style>
+    <script>
+        function byId(a) {
+            return document.getElementById(a);
+        }
+        window.onload = function () {
+            var df = document.forms.f1;
+
+            var startEdit = function() {
+                text2.value = text1.innerHTML.trimLeft();
+                text0.style.display = "none";
+                stiliz.style.display = "none";
+                redaguv.style.display = "block";
+            };
+
+            byId("text1").onclick = function() {
+                // Редагувати
+                startEdit();
+            };
+
+            df.red.onclick = function() {
+                // Редагувати
+                startEdit();
+            };
+
+            df.zber.onclick = function() {
+                // Зберегти
+                text1.innerHTML = text2.value;
+            };
+
+            df.st.onclick = function() {
+                // Стилізувати
+                redaguv.style.display = "none";
+                text0.style.display = "none";
+                stiliz.style.display = "block";
+            };
+
+            for(var push=0; push < df.rbtn.length; push++) {
+                // Розмір шрифта
+                df.rbtn[push].onclick = function() {
+                    text1.style.fontSize = this.value;
+                }
+            }
+            df.list.onchange = function() {
+                // Зміна назви шрифта
+                text1.style.fontFamily = this.value;
+            };
+            df.zhyr.onclick = function() {
+                // Жирний шрифт
+                if (this.checked) text1.style.fontWeight = this.value;
+                else text1.style.fontWeight = "normal";
+            };
+            df.kurs.onclick = function() {
+                // Курсивний шрифт
+                if (this.checked) text1.style.fontStyle = this.value;
+                else text1.style.fontStyle = "normal";
+            };
+
+
+
+            var n=0;
+            df.kolirt.onclick = function(e) {
+                // Вискакування таблиці для кольору шрифту
+                n++;
+                if (n % 2 != 0) {
+                    byId("table_kolir").style.top = (e.layerY+2)+"px";
+                    byId("table_kolir").style.left = (e.layerX+2)+"px";
+                    byId("table_kolir").style.display = "block";
+
+                    var colors = byId("table_kolir").getElementsByTagName("td");
+                    for(var enter = 0; enter < colors.length; enter++) {
+                        colors[enter].onclick = function() {
+                            byId("text1").style.color = this.getAttribute("data-value");
+                            byId("table_kolir").style.display = "none";
+                            n=0;
+                        }
+                    }
+                }
+                else {
+                    byId("table_kolir").style.display = "none";
+                }
+            };
+
+
+            var m=0;
+            df.kolirf.onclick = function(e) {
+                // Вискакування таблиці для кольору фону
+                m++;
+                if (m % 2 != 0) {
+                    byId("table_kolir").style.top= (e.layerY+2)+"px";
+                    byId("table_kolir").style.left= (e.layerX+2)+"px";
+                    byId("table_kolir").style.display = "block";
+                    var colors = byId("table_kolir").getElementsByTagName("td");
+                    for(var enter1 = 0; enter1 < colors.length; enter1++) {
+                        colors[enter1].onclick = function() {
+                            byId("text1").style.background = this.getAttribute("data-value");
+                            byId("table_kolir").style.display = "none";
+                            m=0;
+                        }
+                    }
+                }
+                else {
+                    byId("table_kolir").style.display = "none";
+                }
+            };
+
+            df.dod.onclick = function() {
+                // Відкриття оверлею
+                dodaty.style.display="block";
+                dodaty_fon.style.display="block";
+            }
+
+            byId("dodaty_fon").onclick = function() {
+                // Закриття оверлею
+                this.style.display="none";
+                byId("dodaty").style.display="none";
+            };
+
+            df.rtable.onclick = function() {
+                // Вкладка для створення таблиці
+                if (this.checked) {
+                    byId("dodaty_table").style.display="block";
+                    byId("dodaty_list").style.display="none";
+                }
+            }
+                // Створення таблиці
+            df.button_t.onclick = function () {
+                var rows = df.tfr.value;
+                var cols = df.tfs.value;
+                var sh = df.tfsh.value;
+                var vys = df.tfv.value;
+                var tovshch = df.tft.value;
+                var typ_linii = df.list_typ.value;
+                var kolir_linii = df.list_kolir.value;
+                var t = "<table style='empty-cells: show;'>";
+
+                for (var q = 1; q <= rows; q++) {
+                    t+= "<tr>";
+                    for (var w = 1; w <= cols; w++) {
+                        t += "<td style='border: " + tovshch + "px " + typ_linii + " " + kolir_linii + "; width:" + sh + "px; height:" + vys + "px;'></td>";
+                    }
+                    t += "</tr>";
+                }
+                t += "</table>";
+                byId("text1").innerHTML = byId("text1").innerHTML + t;
+                text2.value = text1.innerHTML.trimLeft();
+            }
+
+
+            df.rlist.onclick = function() {
+                // Вкладка для створення списку
+                if (this.checked) {
+                    byId("dodaty_list").style.display="block";
+                    byId("dodaty_table").style.display="none";
+                }
+            }
+
+            // Створення списку
+            df.button_l.onclick = function() {
+                var elementy = df.tfk.value;
+                if (byId("radio_mark").checked) {
+                    var list = "<ul type='" + byId('dcs').value +"'>";
+                }
+                else if (byId("radio_number").checked) {
+                    var list = "<ol type='" + df.oltype.value +"'>";
+                }
+                else {
+                    alert("Select list type :)");
+                    return;
+                }
+                for (var x = 1; x <= elementy; x++) {
+                    list = list + "<li></li>";
+                }
+                if (byId("radio_mark").checked) {
+                    list = list + "</ul>";
+                }
+                else {
+                    list += "</ol>";
+                }
+                byId("text1").innerHTML = byId("text1").innerHTML + list;
+                text2.value = text1.innerHTML.trimLeft();
+            }
+        }
+    </script>
+</head>
+
+
+<body>
+
+<div class="div" id="text1">
+    http://habrahabr.ru/post/149441/ <br><br> http://getbootstrap.com/examples/dashboard/ <br><br> http://jsfiddle.net/kz5ax6xs/ <br><br>
+</div>
+
+
+
+<form name="f1" autocomplete="off">
+    <p id="red-st">
+        <input type="button" name="red" value="Редагувати">
+        <input type="button" name="st" value="Стилізувати">
+    </p>
+
+
+
+    <div class="div" id="text0"></div>
+
+
+
+    <div class="div" id="redaguv">
+        <p>
+            <textarea class="text" id="text2"> </textarea>
+        </p>
+        <p>
+            <input type="button" name="zber" value="Зберегти">
+            <input type="button" name="dod" value="Додати">
+        </p>
+    </div>
+
+
+
+    <div class="div" id="stiliz">
+        <p id="rbtns">Розмір тексту:
+            <input type="radio" id="r1" name="rbtn" value="12pt" />
+            <label for="r1">12pt</label>
+            <input type="radio" id="r2" name="rbtn" value="14pt" />
+            <label for="r2">14pt</label>
+            <input type="radio" id="r3" name="rbtn" value="16pt" />
+            <label for="r3">16pt</label>
+            <input type="radio" id="r4" name="rbtn" value="18pt" />
+            <label for="r4">18pt</label>
+            <input type="radio" id="r5" name="rbtn" value="20pt" />
+            <label for="r5">20pt</label>
+        </p>
+        <p>Тип шрифта:
+            <select name="list">
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Monospace">Monospace</option>
+                <option value="sans-serif">Sans-serif</option>
+            </select>
+        </p>
+        <p>
+            <input type="button" name="kolirt" value="Колір тексту" />
+            <input type="button" name="kolirf" value="Колір фону" />
+            <table id="table_kolir">
+                <tr>
+                    <td data-value="white" style="background: white"></td> <td data-value="grey" style="background: grey"></td> <td data-value="black" style="background: black"></td>
+                </tr>
+                <tr>
+                    <td data-value="red" style="background: red"></td> <td data-value="green" style="background: green"></td> <td data-value="blue" style="background: blue"></td>
+                </tr>
+                <tr>
+                    <td data-value="aqua" style="background: aqua"></td> <td data-value="violet" style="background: violet"></td> <td data-value="yellow" style="background: yellow"></td>
+                </tr>
+            </table>
+        </p>
+        <p><input type="checkbox" name="zhyr" value="bold">Жирний текст</p>
+        <p><input type="checkbox" name="kurs" value="italic">Курсивний текст</p>
+    </div>
+    <div id="dodaty_fon">
+    </div>
+    <div id="dodaty">
+        <h3> Виберіть, що саме ви хочете додати: </h3>
+        <input type="radio" name="r-btn" value="table" id="rtable">
+        <label for="rtable">Таблицю</label>
+        <input type="radio" name="r-btn" value="list" id="rlist">
+        <label for="rlist">Список</label>
+            <div id="dodaty_table">
+            <p> Введіть кількість рядків таблиці: <input type="text" name="tfr" value="" class="tf" id="tfr"> </p><br>
+            <p> Введіть кількість стовпців таблиці: <input type="text" name="tfs" value="" class="tf" id="tfs"> </p><br>
+            <h3>Стилізуйте таблицю</h3>
+            <p> Введіть ширину комірки таблиці: <input type="text" name="tfsh" value="" class="tf" id="tfsh"> </p><br>
+            <p> Введіть висоту комірки таблиці: <input type="text" name="tfv" value="" class="tf" id="tfv"> </p><br>
+            <p> Товщина: <input type="text" name="tft" value="" class="tf">&nbsp;&nbsp;
+                Тип лінії: <select name="list_typ">
+                    <option value="solid">solid</option>
+                    <option value="dotted">dotted</option>
+                    <option value="dashed">dashed</option>
+                    <option value="double">double</option>
+                    </select>&nbsp;&nbsp;
+                Колір лінії: <select name="list_kolir">
+                    <option value="black">black</option>
+                    <option value="grey">grey</option>
+                    <option value="red">red</option>
+                    <option value="pink">pink</option>
+                    <option value="blue">blue</option>
+                    </select><br /><br />
+            </p>
+            <input type="button" name="button_t" value="Створити таблицю">
+            </div>
+
+            <div id="dodaty_list">
+                <p> Введіть кількість елементів списку: <input type="text" name="tfk" value="" class="tf"> </p>
+                <br />
+                <h3>Стилізуйте список</h3>
+                <p> Тип списку:
+                    <input type="radio" name="radio_markornum" id="radio_mark" />
+                    <label for="radio_mark">Маркований;</label>
+                    &nbsp;&nbsp;
+                    Вид маркера: <select name="ultype" id="dcs">
+                        <option value="disc">disc</option>
+                        <option value="circle">circle</option>
+                        <option value="square">square</option>
+                </select>
+                </p>
+
+                <p>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="radio" name="radio_markornum" id="radio_number" />
+                <label for="radio_number">Нумерований;</label>
+                &nbsp; Вид маркера: <select name="oltype" id="1Aa">
+                    <option value="1">1, 2, 3</option>
+                    <option value="A">A, B, C</option>
+                    <option value="a">a, b, c</option>
+                    <option value="I">I, II, III</option>
+                    <option value="i">i, ii, iii</option>
+                </select>
+                </p> <br />
+
+
+                <p><input type="button" name="button_l" value="Створити список"></p>
+            </div>
+
+
+
+    </div>
+
+
+</form>
+</body>
+</html>
